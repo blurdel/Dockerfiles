@@ -1,0 +1,30 @@
+# Creates Docker Image for <...>
+
+FROM centos:7
+
+# Target Service folder
+ENV serviceDir=MyService
+
+# Service binary, will be copied to "service.jar" below
+ENV serviceJar=MyService-0.0.1-SNAPSHOT.jar
+
+# Install Java
+RUN yum install -y java-11
+
+RUN mkdir -p /opt/${serviceDir}           && \
+    mkdir -p /opt/${serviceDir}/config    && \
+    mkdir -p /opt/${serviceDir}/log
+
+# Copy the binary
+COPY ./target/${serviceJar} /opt/${serviceDir}/service.jar
+
+RUN useradd service_user
+RUN chown service_user /opt/${serviceDir}
+
+USER service_user
+
+EXPOSE 8080
+
+WORKDIR /opt/${serviceDir}
+
+ENTRYPOINT ["java", "-jar", "service.jar"]
