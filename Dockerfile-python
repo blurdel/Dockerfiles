@@ -1,0 +1,14 @@
+FROM python:3.8-slim-buster
+
+USER root
+
+WORKDIR /service
+
+COPY ./src .
+COPY ./requirements.txt .
+
+RUN pip install -r requirements.txt
+
+USER python
+
+CMD ["python", "main.py"]
